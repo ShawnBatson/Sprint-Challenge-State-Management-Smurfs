@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import getSmurf from "./actions/SmurfAction";
-import { bindActionCreators } from "redux";
 import axios from "axios";
 
 const SmurfForm = ({ getSmurf, error }) => {
@@ -11,21 +10,24 @@ const SmurfForm = ({ getSmurf, error }) => {
 
   const handleChanges = event => {
     event.preventDefault();
-    setNewSmurf(event.target.value);
+    setNewSmurf({ ...newSmurf, [event.target.name]: event.target.value });
     console.log(newSmurf);
   };
 
   const handleSubmit = event => {
     event.preventDefault();
-    const smurf = {
-      name: event.target.name,
-      age: event.target.age,
-      height: event.target.height
-    };
+    console.log("this is in handleSubmit");
 
-    axios.post("http://localhost:3333/smurfs", { smurf }).then(res => {
-      console.log("this is in the POST call", res);
-    });
+    console.log("smurf object", newSmurf);
+
+    axios
+      .post("http://localhost:3333/smurfs", newSmurf)
+      .then(function(response) {
+        console.log(response);
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
   };
 
   return (
@@ -39,8 +41,8 @@ const SmurfForm = ({ getSmurf, error }) => {
 
         <label>Height:</label>
         <input type="text" name="height" onChange={handleChanges} />
+        <button type="submit">Add</button>
       </form>
-      <button type="submit">Add</button>
     </div>
   );
 };
